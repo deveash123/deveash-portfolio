@@ -24,7 +24,7 @@ export const site = {
   email: 'gdeveash@gmail.com',
   github: 'https://github.com/deveash123',
   linkedin: 'https://www.linkedin.com/in/deveashg',
-  portfolio: 'https://gdeveash.vercel.app',
+  portfolio: 'https://deveash-g.vercel.app',
   /**
    * TODO(owner): drop a real PDF at public/Deveash-G-Resume.pdf and point this at
    * "/Deveash-G-Resume.pdf". The resume button renders only once this is set, so
@@ -62,7 +62,7 @@ export const navLinks = [
 export const sectionOrder = navLinks.map((link) => link.id) as unknown as readonly string[]
 
 export const socialLinks = [
-  { label: 'Portfolio', href: site.portfolio, handle: 'gdeveash.vercel.app' },
+  { label: 'Portfolio', href: site.portfolio, handle: 'deveash-g.vercel.app' },
   { label: 'GitHub', href: site.github, handle: 'github.com/deveash123' },
   { label: 'LinkedIn', href: site.linkedin, handle: 'linkedin.com/in/deveashg' },
   { label: 'Email', href: `mailto:${site.email}`, handle: site.email, copyable: true },

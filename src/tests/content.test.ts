@@ -17,7 +17,7 @@ describe('site identity', () => {
     expect(site.github).toBe('https://github.com/deveash123')
     expect(site.linkedin).toBe('https://www.linkedin.com/in/deveashg')
     expect(site.email).toBe('gdeveash@gmail.com')
-    expect(site.portfolio).toBe('https://gdeveash.vercel.app')
+    expect(site.portfolio).toBe('https://deveash-g.vercel.app')
   })
 
   it('keeps resumeUrl null until a real PDF is supplied', () => {
