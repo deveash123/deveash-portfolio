@@ -1,4 +1,4 @@
-﻿@import 'tailwindcss';
+@import 'tailwindcss';
 
 /* ---------------------------------------------------------------------------
    DESIGN SYSTEM — distilled from the supplied reference layout
@@ -29,14 +29,8 @@
   --color-paper-dim: #e9e3d7;
   --color-paper-deep: #ddd5c5;
   --color-ink: #14120f;
-  --color-ink-soft: #4a443c;
-  /* Tier three. Darkened from #7a736a, which measured **4.04:1** on the cream
-     ground — below WCAG AA for the 9.5–12px labels this tier exists for. Every
-     value in this palette is now verified against its real painted background by
-     `%TEMP%/opencode/contrast-audit.cjs`; do not lighten it back toward the old
-     value without re-running that. #5f584e = 6.06:1 on paper, 5.49:1 on
-     paper-dim, and still reads clearly lighter than `ink-soft` (8.31:1). */
-  --color-ink-faint: #5f584e;
+  --color-ink-soft: #2e2a25;
+  --color-ink-faint: #4c453c;
   --color-clay: #b24a2c;
   --color-clay-deep: #8e3a20;
   --color-clay-wash: #e9d3c8;
@@ -651,7 +645,7 @@ padding: 1.6cqw 3.2cqw;
   #direction,
   #hire,
   #contact {
-    scroll-margin-top: 5.5rem;
+    scroll-margin-top: 6.5rem;
   }
 
   /* --- press pass loader ----------------------------------------------------
@@ -789,7 +783,8 @@ padding: 1.6cqw 3.2cqw;
      can strand content at 0 has already broken this project once; 0.55 and 0.5
      fade without ever making text unreadable, even if the timeline misbehaves. */
   .reveal {
-    /* visible by default — never opacity: 0 */
+    /* visible by default */
+    opacity: 1;
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -797,34 +792,22 @@ padding: 1.6cqw 3.2cqw;
       .reveal {
         animation: reveal-fade linear both;
         animation-timeline: view();
-        animation-range: entry calc(4% + var(--reveal-lead, 0%)) exit calc(26% + var(--reveal-lead, 0%));
+        animation-range: entry calc(0% + var(--reveal-lead, 0%)) entry calc(35% + var(--reveal-lead, 0%));
       }
     }
   }
 
-/* Three movements in one keyframe: rise and fade in, hold at full while the
-       element is on screen, then recede as it leaves. */
-    @keyframes reveal-fade {
-      0% {
-        opacity: 0.55;
-        transform: translate3d(0, 1.1rem, 0);
-      }
-
-      30% {
-        opacity: 1;
-        transform: translate3d(0, 0, 0);
-      }
-
-      70% {
-        opacity: 1;
-        transform: translate3d(0, 0, 0);
-      }
-
-      100% {
-        opacity: 0.5;
-        transform: translate3d(0, -0.7rem, 0);
-      }
+  @keyframes reveal-fade {
+    0% {
+      opacity: 0.25;
+      transform: translate3d(0, 1rem, 0);
     }
+
+    100% {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
 }
 
 @layer utilities {

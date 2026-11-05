@@ -328,17 +328,6 @@ export function StaggerItem({
 export function ScrollFade({
   children,
   className = '',
-  /** travel in px on the way in */
-distance = 16,
-  /**
-   * How far it recedes once it has left.
-   *
-   * Deliberately NOT low. Two reasons: a fade-out that reaches near-invisible
-   * looks broken if the observer fires a frame early, and it compounds with any
-   * other opacity layer underneath (the CSS `.reveal` also animates opacity, so
-   * 0.12 x 0.55 measured **0.066** — genuinely unreadable).
-   */
-  outTo = 0.4,
 }: {
   children: ReactNode
   className?: string
@@ -346,51 +335,12 @@ distance = 16,
   outTo?: number
 }) {
   const ref = useRef<HTMLDivElement>(null)
-  const reduce = useReducedMotion()
-  const [inView, setInView] = useState(true)
-  const [ready, setReady] = useState(false)
 
-  useEffect(() => {
-    if (reduce === true) return
-    const el = ref.current
-    if (!el) return
-    // start positive and only start listening once: an element already on screen
-    // should simply BE there, not blink in on load
-    setInView(false)
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) setInView(entry.isIntersecting)
-      },
-      // Positive bottom margin: the element must have moved FULLY past the
-      // viewport before it starts receding. A negative bottom margin fired the
-      // fade-out while content was still partly on screen, which is what the QA
-      // caught at 0.069 effective opacity.
-      { threshold: 0, rootMargin: '0px 0px 8% 0px' },
-    )
-    io.observe(el)
-    setReady(true)
-    return () => io.disconnect()
-  }, [reduce])
-
-  const animate =
-    reduce === true || !ready
-      ? { opacity: 1, y: 0 }
-      : inView
-        ? { opacity: 1, y: 0 }
-        : { opacity: outTo, y: -distance * 0.35 }
-
-return (
+  return (
     <div ref={ref} data-fade="" className={className}>
-      <motion.div
-        initial={false}
-        animate={animate}
-        transition={{
-          duration: reduce === true ? 0 : 0.62,
-          ease: [0.22, 1, 0.36, 1],
-        }}
-      >
+      <div style={{ opacity: 1 }}>
         {children}
-      </motion.div>
+      </div>
     </div>
   )
 }
