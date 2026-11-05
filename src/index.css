@@ -1,0 +1,838 @@
+﻿@import 'tailwindcss';
+
+/* ---------------------------------------------------------------------------
+   DESIGN SYSTEM — distilled from the supplied reference layout
+
+   The reference is an editorial poster, not a dashboard. Its whole character
+   comes from four things, and everything else is subordinate to them:
+
+     1. a warm off-white PAPER ground, never pure white
+     2. one near-black INK used for display type and body alike
+     3. ONE clay/terracotta accent, used sparingly: the portrait circle, the
+        second line of section headings, the project numbers, the accent rules
+     4. hairlines. The page is divided by 1px rules, not by shadows or cards.
+
+   Deliberately absent: drop shadows, rounded blobs, gradients-as-decoration,
+   glassmorphism, and coloured section backgrounds. The reference has none of
+   those, and adding them is the fastest way to lose the look.
+
+   Contrast is checked per pair because one token cannot serve both grounds:
+     ink        #14120F on paper #F2EEE6 -> 15.6:1
+     ink-soft   #4A443C on paper #F2EEE6 ->  8.4:1
+     ink-faint  #7A736A on paper #F2EEE6 ->  4.6:1  (large text / meta only)
+     clay       #B24A2C on paper #F2EEE6 ->  5.4:1
+     clay-deep  #8E3A20 on paper #F2EEE6 ->  7.1:1
+     paper      #F2EEE6 on ink   #14120F -> 15.6:1
+--------------------------------------------------------------------------- */
+@theme {
+  --color-paper: #f2eee6;
+  --color-paper-dim: #e9e3d7;
+  --color-paper-deep: #ddd5c5;
+  --color-ink: #14120f;
+  --color-ink-soft: #4a443c;
+  /* Tier three. Darkened from #7a736a, which measured **4.04:1** on the cream
+     ground — below WCAG AA for the 9.5–12px labels this tier exists for. Every
+     value in this palette is now verified against its real painted background by
+     `%TEMP%/opencode/contrast-audit.cjs`; do not lighten it back toward the old
+     value without re-running that. #5f584e = 6.06:1 on paper, 5.49:1 on
+     paper-dim, and still reads clearly lighter than `ink-soft` (8.31:1). */
+  --color-ink-faint: #5f584e;
+  --color-clay: #b24a2c;
+  --color-clay-deep: #8e3a20;
+  --color-clay-wash: #e9d3c8;
+  --color-rule: #14120f24;
+  --color-rule-strong: #14120f3d;
+
+  --font-display: 'Anton', 'Arial Narrow', 'Haettenschweiler', sans-serif;
+  --font-serif: 'Playfair Display', 'Times New Roman', Georgia, serif;
+  --font-sans: 'Manrope Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-script: 'Allura', 'Segoe Script', cursive;
+}
+
+@layer base {
+  /* the page gutter. Shared by every section so the vertical rules of the
+     reference line up exactly, and so `.mega-word` can cancel it out precisely. */
+  :root {
+    --gutter: clamp(1.25rem, 4vw, 3.5rem);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: var(--color-clay);
+    color: var(--color-paper);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-clay);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
+
+@layer components {
+  /* --- the vertical rails down the left and right edges ------------------- */
+  .rail {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    z-index: 40;
+    display: none;
+    width: 34px;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .rail > span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    white-space: nowrap;
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--color-ink-faint);
+  }
+
+  .rail-left {
+    left: 0;
+  }
+
+  .rail-right {
+    right: 0;
+  }
+
+  .rail-left > span {
+    transform: translate(-50%, -50%) rotate(-90deg);
+  }
+
+  .rail-right > span {
+    transform: translate(-50%, -50%) rotate(90deg);
+  }
+
+  /* thin tick marks that run down each rail, matching the reference */
+  .rail::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background-color: var(--color-rule);
+  }
+
+  .rail-left::before {
+    right: 0;
+  }
+
+  .rail-right::before {
+    left: 0;
+  }
+
+  @media (min-width: 1180px) {
+    .rail {
+      display: block;
+    }
+  }
+
+  /* --- poster hero ---------------------------------------------------------
+     Everything is a percentage of the inner width, taken from the reference
+     (633px inner width): word 225px tall, portrait 345x370 starting at 41.5%,
+     clay disc 45% wide resting on the hairline. */
+  .poster-inner {
+    container-type: inline-size;
+  }
+
+  .mega-svg {
+    display: block;
+    width: 100%;
+    aspect-ratio: 633 / 225;
+    color: var(--color-ink);
+    user-select: none;
+  }
+
+  .stage-wrap {
+    position: relative;
+  }
+
+  .stage {
+    position: relative;
+    aspect-ratio: 633 / 285;
+  }
+
+  .stage-disc {
+    position: absolute;
+    left: 39%;
+    bottom: 0;
+    width: 45%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background-color: #d4694a;
+    transform: translateY(2%);
+    clip-path: inset(0 0 2% 0);
+  }
+
+.stage-portrait {
+      position: absolute;
+      left: 34%;
+      bottom: 0;
+      /* Narrower than it was: at 66.4% the subject ran to x=1098 and completely
+         buried the rotating seal, which only occupies x=921..1082. 50% ends the
+         subject at x=900 and leaves the disc's crescent reading on its left. */
+      width: 50%;
+      /* Must match the real asset or `object-fit: contain` letterboxes the
+         subject inside its own box and the composition shifts. The current
+         source (`assets/hero.png`) is 1254x1254. */
+      aspect-ratio: 1 / 1;
+      object-fit: contain;
+      object-position: bottom;
+    }
+
+.stage-copy {
+      position: absolute;
+      left: 0;
+      /* 7%, not 8%: at exactly 1024px the copy column is still absolute but
+         wraps to its tallest, and at 8% its bottom edge landed 1px past the
+         hero's rule. The stage is short there, so a 1% change buys several px. */
+      top: 7%;
+      width: 38%;
+      z-index: 2;
+    }
+
+    .hero-name {
+      margin-top: 2.2cqw;
+      /* One line now, so the name can never break to a second row and shove the
+         signature past the section rule. */
+white-space: nowrap;
+      font-family: var(--font-serif);
+      font-weight: 400;
+      /* Sized to FIT the copy column, not just to look big. The column is 38%
+         of the stage and this is cqw of the same container, so both scale
+         together and the ratio is constant — at 6.9cqw the measured glyph run
+         was 430px inside a 407px column, i.e. ~5% over at every desktop width. */
+      font-size: 6.4cqw;
+    line-height: 0.98;
+    letter-spacing: -0.005em;
+    text-transform: uppercase;
+  }
+
+  .hero-role {
+    margin-top: 2.2cqw;
+    font-size: clamp(11.5px, 1.62cqw, 16.5px);
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-clay);
+  }
+
+  .hero-intro {
+    margin-top: 1.8cqw;
+    max-width: 34ch;
+    font-size: clamp(12.5px, 1.74cqw, 16.5px);
+    line-height: 1.5;
+    color: var(--color-ink-soft);
+  }
+
+    .hero-sign {
+      /* The copy column is absolutely positioned inside .stage-wrap, so it does
+         not drive the hero's height — left too loose, the script signature
+         crossed the section's bottom rule. Tightened, and the name going to a
+         single line freed another line of height. */
+      margin-top: 0.7cqw;
+      font-family: var(--font-script);
+    font-size: clamp(1.7rem, 5.82cqw, 3.4rem);
+    line-height: 1;
+    color: var(--color-ink);
+  }
+
+  .seal {
+    position: absolute;
+    right: -1%;
+    top: 22%;
+    width: 15%;
+    min-width: 5.5rem;
+    aspect-ratio: 1;
+    color: var(--color-ink);
+    z-index: 3;
+  }
+
+  .seal-core {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    text-align: center;
+    font-size: clamp(10px, 1.46cqw, 13.5px);
+    font-weight: 600;
+    line-height: 1.35;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-clay);
+  }
+
+  /* the reference's rail text, set in the hero's own side margins */
+  .hero-rail {
+    position: absolute;
+    top: 1.25rem;
+    bottom: 0;
+    width: 3.25rem;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.9rem;
+    padding-top: 2rem;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+  }
+
+  .hero-rail span {
+    writing-mode: vertical-rl;
+    white-space: nowrap;
+  }
+
+  .hero-rail i {
+    width: 1px;
+    height: 2.5rem;
+    background-color: var(--color-rule-strong);
+  }
+
+  .hero-rail-left {
+    left: 0.75rem;
+  }
+
+  .hero-rail-left span {
+    transform: rotate(180deg);
+  }
+
+  .hero-rail-right {
+    right: 0.75rem;
+  }
+
+  @media (min-width: 1024px) {
+    .hero-rail {
+      display: flex;
+    }
+  }
+
+  /* below lg the copy drops under the stage and the stage gets more height */
+  @media (max-width: 1023px) {
+    .stage {
+      aspect-ratio: 633 / 330;
+      margin-bottom: 1.5rem;
+    }
+
+.stage-copy {
+        position: static;
+        width: 100%;
+        padding-top: 0.5rem;
+        /* Matches the 1.75rem transition used by the section that follows the
+           hero, so the rule never floats in a wide band below the signature. */
+        padding-bottom: 1.75rem;
+      }
+
+    .hero-name {
+      font-size: clamp(2.6rem, 15.68cqw, 4.6rem);
+    }
+
+    .hero-role {
+      font-size: 12.5px;
+    }
+
+    .hero-intro {
+      font-size: 15px;
+    }
+
+    .hero-sign {
+      font-size: 2.8rem;
+    }
+
+.stage-portrait {
+        /* Was 86%, which ran under the seal at bottom-right and put
+           "OPEN TO COLLABORATE" on top of the black jacket — unreadable.
+           Narrowed so the bottom-right corner stays clear for the seal. */
+        left: 4%;
+        width: 66%;
+      }
+
+.stage-disc {
+        left: 26%;
+        width: 58%;
+      }
+
+    .seal {
+      width: 6.25rem;
+      right: 0;
+      top: auto;
+      bottom: -1.25rem;
+    }
+
+.seal-core {
+        font-size: 12px;
+      }
+  }
+
+  /* --- poster sections ---------------------------------------------------- */
+.poster-sec {
+      max-width: 1240px;
+      margin-inline: auto;
+      padding: 3rem var(--gutter);
+      border-bottom: 1px solid var(--color-rule);
+      }
+
+      /* The hero already closes on a hairline rule of its own, so giving the very
+         next section the full 3rem top padding stacked a second band under that
+         rule and the two together read as one large dead gap. The section that
+         directly follows the hero gets the tighter transition instead.
+
+         Scoped to the adjacent sibling rather than a one-off id, so if the hero
+         gains or loses a sibling section this still lands on the right one.
+         Every other section keeps the same 3rem cadence, so the poster's
+         vertical rhythm is unchanged. */
+      .poster-hero + .poster-sec {
+        padding-top: 1.75rem;
+      }
+
+  @media (min-width: 1280px) {
+    .poster-sec {
+      border-inline: 0;
+    }
+  }
+
+  .poster-h2 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: clamp(1.5rem, 2.9vw, 2.5rem);
+    line-height: 1.02;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+  }
+
+  .poster-head {
+    display: grid;
+    gap: 1.25rem;
+    align-items: end;
+  }
+
+  @media (min-width: 768px) {
+    .poster-head {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 3rem;
+    }
+  }
+
+  .poster-lede {
+    max-width: 30ch;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--color-ink-soft);
+  }
+
+  .poster-link {
+    justify-self: start;
+    color: var(--color-ink);
+    transition: color 0.2s;
+  }
+
+  .poster-link:hover {
+    color: var(--color-clay);
+  }
+
+  @media (min-width: 768px) {
+    .poster-link {
+      justify-self: end;
+    }
+  }
+
+  /* --- project tiles ------------------------------------------------------- */
+  .thumb {
+    position: relative;
+    aspect-ratio: 154 / 146;
+    overflow: hidden;
+    container-type: inline-size;
+  }
+
+  .thumb-in {
+    position: absolute;
+    inset: 0;
+    padding: 9cqw 8cqw;
+  }
+
+    .thumb-kicker {
+      /* `max()` gives these a legibility floor. Pure cqw collapsed to 6-7px on
+         the 2-up mobile grid, which is unreadable; the floor keeps them legible
+         while the tiles still scale the label on larger screens. */
+      font-size: max(11px, 4.4cqw);
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    /* Was 0.55, which multiplied against the scroll-reveal's own 0.55 start
+       state to an effective **0.30** — the cover labels were barely readable
+       before they even settled. 0.8 keeps them clearly legible at rest and
+       still gives ~0.44 at the very start of the reveal. */
+    opacity: 0.8;
+  }
+
+  .thumb-title {
+    margin-top: 6cqw;
+    font-family: var(--font-serif);
+    font-size: 11.5cqw;
+    line-height: 1.02;
+    text-transform: uppercase;
+  }
+
+  .thumb-btn {
+    position: absolute;
+    left: 8cqw;
+    bottom: 9cqw;
+    border: 1px solid currentColor;
+padding: 1.6cqw 3.2cqw;
+      font-size: max(10.5px, 3.6cqw);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.8;
+  }
+
+  .thumb-art {
+    position: absolute;
+    right: 8cqw;
+    bottom: 9cqw;
+  }
+
+  .thumb-detective {
+    background-color: var(--color-ink);
+    color: var(--color-paper);
+  }
+
+  .thumb-chat {
+    background-color: #cdc2b0;
+    color: var(--color-ink);
+  }
+
+  .thumb-contour {
+    background-color: var(--color-clay);
+    color: var(--color-paper);
+  }
+
+  .thumb-github {
+    background-color: #e9e3d7;
+    color: var(--color-ink);
+    outline: 1px solid var(--color-rule-strong);
+    outline-offset: -1px;
+  }
+
+  /* --- small caps label used across the header and section eyebrows -------- */
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-family: var(--font-sans);
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+  }
+
+  /* --- the editorial link underline: appears on hover, never permanent ---- */
+  .link-underline {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0 1px;
+    transition: background-size 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .link-underline:hover {
+    background-size: 100% 1px;
+  }
+
+  /* --- the long thin arrow used in the reference's action links ----------- */
+  .arrow-rule {
+    position: relative;
+    display: inline-block;
+    width: 4.5rem;
+    height: 1px;
+    background-color: var(--color-clay);
+  }
+
+  .arrow-rule::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    width: 7px;
+    height: 7px;
+    border-top: 1px solid var(--color-clay);
+    border-right: 1px solid var(--color-clay);
+    transform: translateY(-50%) rotate(45deg);
+    transform-origin: center;
+  }
+
+  /* --- project cover art --------------------------------------------------
+     Each project gets a generated cover rather than a fabricated screenshot.
+     These are recognisably diagrams, not fake product photos. */
+  .cover-ink {
+    background-color: var(--color-ink);
+    color: var(--color-paper);
+  }
+
+  .cover-paper {
+    background-color: var(--color-paper-dim);
+    color: var(--color-ink);
+  }
+
+  .cover-clay {
+    background-color: var(--color-clay);
+    color: var(--color-paper);
+  }
+
+  /* --- the maturity track used in Skills ----------------------------------
+     A four-step ordinal scale (filled segments + a word), NOT a percentage.
+     The reference showed "95% / 90%"; those are invented numbers, and the
+     owner asked for his skills to be described honestly. */
+  .meter {
+    display: inline-flex;
+    gap: 4px;
+  }
+
+  .meter > i {
+    display: block;
+    width: 1.5rem;
+    height: 2px;
+    background-color: var(--color-rule-strong);
+    /* the track inks in segment by segment when its row is hovered */
+    transition: background-color 320ms ease;
+  }
+
+  /* The unfilled segments only reach full clay on hover — on hover the whole
+     four-step track is shown as engaged, which is a deliberate read of the
+     scale rather than a claim: the accessible label still states the real step. */
+  .group:hover .meter > i,
+  .group:focus-within .meter > i {
+    background-color: var(--color-clay);
+  }
+
+  .meter > i[data-on='true'] {
+    background-color: var(--color-clay);
+  }
+
+  /* --- section scroll anchors --------------------------------------------
+     The header is sticky, so a section scrolled into view would otherwise land
+     underneath it. `scroll-margin-top` reserves the header's own height, which
+     means the offset stays correct while the header shrinks on scroll (its
+     padding animates between two heights). */
+  #home,
+  #work,
+  #about,
+  #direction,
+  #hire,
+  #contact {
+    scroll-margin-top: 5.5rem;
+  }
+
+  /* --- press pass loader ----------------------------------------------------
+     Matches the loader component: paper ground, two rules printing outward, and
+     the display word inked in by a clay sweep. The word is FULLY VISIBLE at
+     rest so a failed or blocked animation can never leave an empty loader. */
+  .loader-pass {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    overflow: hidden;
+    background-color: var(--color-paper);
+  }
+
+  .loader-word {
+    display: block;
+    font-family: var(--font-display);
+    font-size: clamp(2.4rem, 11vw, 7.5rem);
+    line-height: 0.9;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    color: var(--color-ink);
+    user-select: none;
+  }
+
+  /* --- custom cursor ------------------------------------------------------
+     Only mounted for fine pointers, so touch devices keep their real cursor. */
+  .cursor-hidden,
+  .cursor-hidden * {
+    cursor: none !important;
+  }
+
+  /* Cursor geometry is a transform (see EditorialCursor): a fixed 56px box
+     that scales between 26px and 46px. The stroke is `non-scaling-stroke`, so
+     the hairline stays a true 1px at every size instead of thinning with the
+     scale.
+
+     The two ring states cross-fade with opacity. That is paint-only and only
+     runs on state change — animating stroke colour mid-spring would repaint on
+     every frame the spring is running. No backdrop-filter: this element moves
+     every frame, so a blur here would be re-blurred every frame. The label tag
+     is solid ink instead, which is also a far higher contrast than anything
+     that could sit on top of a photograph. */
+  .ec-halo {
+    fill: none;
+    stroke: var(--color-paper);
+    stroke-opacity: 0.9;
+    stroke-width: 3.5;
+  }
+
+  .ec-ring {
+    fill: none;
+    stroke: var(--color-ink);
+    stroke-opacity: 0.9;
+    stroke-width: 1.25;
+    opacity: 1;
+    transition: opacity 160ms ease;
+  }
+
+  .ec-disc {
+    fill: none;
+    stroke: var(--color-clay);
+    stroke-width: 1.25;
+    opacity: 0;
+    transition: opacity 160ms ease;
+  }
+
+  .ec-on .ec-ring {
+    opacity: 0;
+  }
+
+  .ec-on .ec-disc {
+    opacity: 1;
+  }
+
+  /* The registration point. Solid clay with a paper ring, so it reads on the
+     cream ground AND on the black jacket instead of disappearing into either. */
+  .ec-point {
+    position: relative;
+    width: 9px;
+    height: 9px;
+    border-radius: 9999px;
+    background-color: var(--color-clay);
+    box-shadow: 0 0 0 2px var(--color-paper);
+    transition: scale 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .ec-on .ec-point {
+    scale: 1.35;
+  }
+
+  /* The label. A small ink tag set UNDER the mark rather than text crammed
+     inside it, so the type has room and never fights the ring. Ink on paper is
+     16.2:1, the highest-contrast pairing available in the palette. */
+  .ec-tag {
+    position: absolute;
+    top: calc(100% - 0.5rem);
+    left: 50%;
+    translate: -50% 0;
+    padding: 3px 7px;
+    background-color: var(--color-ink);
+    color: var(--color-paper);
+    font-size: 10px;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: 0.14em;
+    white-space: nowrap;
+    text-transform: uppercase;
+    opacity: 0;
+    scale: 0.92;
+    transition:
+      opacity 160ms ease,
+      scale 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .ec-tag-on {
+    opacity: 1;
+    scale: 1;
+  }
+
+  /* --- scroll reveal: fade IN and fade OUT --------------------------------
+     Additive only. The resting state is fully visible; the animation nudges
+     elements up into place on the way in and lets them recede on the way out.
+     `@supports` gates it because a scroll-timeline rule the browser cannot
+     resolve would otherwise hold the FROM state forever — so an engine
+     without scroll-driven animations (Safari) simply shows everything.
+
+     Driven by `animation-timeline: view()` with an `entry → exit` range, which
+     means the WHOLE thing runs on the compositor: no scroll listener, no
+     per-frame JavaScript, no layout reads. The range still honours
+     `--reveal-lead`, so a grid of tiles keeps its cascade.
+
+     Neither end of the keyframe is `opacity: 0`. A scroll-driven animation that
+     can strand content at 0 has already broken this project once; 0.55 and 0.5
+     fade without ever making text unreadable, even if the timeline misbehaves. */
+  .reveal {
+    /* visible by default — never opacity: 0 */
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .reveal {
+        animation: reveal-fade linear both;
+        animation-timeline: view();
+        animation-range: entry calc(4% + var(--reveal-lead, 0%)) exit calc(26% + var(--reveal-lead, 0%));
+      }
+    }
+  }
+
+/* Three movements in one keyframe: rise and fade in, hold at full while the
+       element is on screen, then recede as it leaves. */
+    @keyframes reveal-fade {
+      0% {
+        opacity: 0.55;
+        transform: translate3d(0, 1.1rem, 0);
+      }
+
+      30% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
+
+      70% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
+
+      100% {
+        opacity: 0.5;
+        transform: translate3d(0, -0.7rem, 0);
+      }
+    }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+}

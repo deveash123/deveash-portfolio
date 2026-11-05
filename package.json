@@ -1,0 +1,46 @@
+{
+  "name": "deveash-portfolio-editorial",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Portfolio of Deveash G. - AI & Tech Builder, Game Developer, App Developer.",
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run typecheck && vite build",
+    "typecheck": "tsc -p tsconfig.json",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "assets": "node scripts/make-assets.mjs",
+    "portrait": "node scripts/make-portrait.mjs",
+    "prebuild": "npm run assets && npm run portrait",
+    "verify:qr": "node scripts/verify-qr.mjs",
+    "verify:assets": "npm run assets && npm run portrait && npm run verify:qr",
+    "og": "node scripts/make-og.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/manrope": "^5.3.0",
+    "@fontsource/allura": "^5.3.0",
+    "@fontsource/anton": "^5.3.0",
+    "@fontsource/playfair-display": "^5.3.0",
+    "framer-motion": "^14.3.0",
+    "lucide-react": "^1.59.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-router-dom": "^7.18.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^26.6.5",
+    "@types/qrcode": "^1.5.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "jsqr": "^1.4.0",
+    "pngjs": "^7.0.0",
+    "qrcode": "^1.5.4",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.4",
+    "vitest": "^5.0.5"
+  }
+}
