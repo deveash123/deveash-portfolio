@@ -11,3 +11,6 @@ public/qr-portfolio.png
 public/portrait.png
 public/og-card.jpg
 .env*
+
+.vercel
+.env*
