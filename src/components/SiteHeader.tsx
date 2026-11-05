@@ -189,7 +189,7 @@ export function SiteHeader() {
               transition={{ type: 'spring', stiffness: 520, damping: 30 }}
               className="group inline-flex items-center gap-2 border border-ink px-3.5 py-2 text-[11px] font-extrabold uppercase tracking-[0.16em] text-ink transition-colors duration-200 hover:bg-ink hover:text-paper"
             >
-              Hire freelancer
+              Hire me
               <ArrowUpRight
                 size={13}
                 strokeWidth={2.6}
